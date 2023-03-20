@@ -1,0 +1,383 @@
+/* Set the font family and size for the game */
+body {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    color: #333;
+    text-shadow: 1px 1px 2px #bfbbd8;
+  }
+  
+  /* Center the game in the middle of the screen */
+  #game-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #eef4f5;
+  }
+  
+  /* Style the game title */
+  h1 {
+    font-size: 6rem;
+    margin: 3rem 0 2rem 0;
+    text-align: center;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+  }
+  p {
+    font-size: 28px;
+    margin: 48px 0 20px 0;
+    text-align: center;
+    color: #333;
+  }
+  
+  
+  /* Style the guess input field */
+  #guess-input {
+    width: 25rem;
+    height: 4rem; /* Increase the height */
+    padding: 1rem;
+    margin: 2rem auto 0 auto;
+    display: block;
+    border-radius: 2rem;
+    border: 2px solid #ff6b6b; /* Add a border with a contrasting color */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    font-size: 2rem; /* Increase the font size */
+    background-color: #fffacd; /* Add a background color that stands out */
+    text-align: center;
+    font-size: 4rem;
+    font-weight: bold;
+  }
+  
+  
+  /* Style the submit button */
+  button {
+    padding: 1rem 2rem;
+    margin-top: 2rem;
+    background-color: #00a86b;
+    color: #fff;
+    border: none;
+    border-radius: 2rem;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  button:hover {
+    background-color: #007a4d;
+  }
+  
+  /* Style the feedback text */
+  #feedback {
+    margin-top: 3rem;
+    font-size: 4rem;
+    text-align: center;
+    color: #1e241e;
+  }
+  
+  /* Style the word container */
+  #word-container {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin: 2rem auto;
+    padding: 1rem;
+    border: 2px solid #333;
+    border-radius: 2rem;
+    width: 20%;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  /* Style the feedback container */
+  #feedback-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+  
+  #feedback-container span {
+    margin-right: 0.5rem;
+    font-weight: bold;
+    font-size: 4rem;
+  }
+  
+  .correct {
+    color: green;
+  }
+  
+  .wrong-position {
+    color: yellow;
+  }
+  
+  .incorrect {
+    color: red;
+  }
+  
+  #win-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #FFC300;
+    padding: 4rem;
+    border-radius: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 9999;
+    text-align: center;
+    font-size: 3rem;
+    color: white;
+  }
+  
+  #win-message h2 {
+    font-size: 4rem;
+    margin-bottom: 2rem;
+  }
+  
+  #win-message button {
+    display: block;
+    margin: 2rem auto 0 auto;
+    padding: 1rem 2rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 2rem;
+    font-size: 2rem;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  #win-message button:hover {
+    background-color: #3e8e41;
+  }
+
+  #lose-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ff0000;
+    padding: 4rem;
+    border-radius: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 9999;
+    text-align: center;
+    font-size: 3rem;
+    color: white;
+  }
+  
+  #lose-message h2 {
+    font-size: 4rem;
+    margin-bottom: 2rem;
+  }
+  
+  #lose-message button {
+    display: block;
+    margin: 2rem auto 0 auto;
+    padding: 1rem 2rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 2rem;
+    font-size: 2rem;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  #lose-message button:hover {
+    background-color: #3e8e41;
+  }
+  
+  
+  /* Hide the win message by default */
+  .hidden {
+    display: none;
+  }
+  /* Style the reveal hint button */
+#reveal-hint-btn {
+    padding: 1rem 2rem;
+    margin-top: 2rem;
+    background-color: #00a86b;
+    color: #fff;
+    border: none;
+    border-radius: 2rem;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  #reveal-hint-btn:hover {
+    background-color: #007a4d;
+  }
+  
+  /* Style the hint text */
+  #hint {
+    margin-top: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+  }
+  
+  #hints-container {
+    margin-top: 1rem;
+    border: 2px solid black;
+    padding: 1rem;
+    width: 20%;
+    margin: 2rem auto;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    border-radius: 2rem;
+    }
+    
+    #hints-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 0;
+    }
+    
+    .hidden {
+    display: none;
+    }
+    #guess-input-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
+        align-items: center;
+      }
+      .input-container {
+        display: flex;
+        align-items: center;
+      }
+      
+      .guess-input {
+        width: 3rem;
+        height: 3rem;
+        margin-right: 1rem;
+        text-align: center;
+        font-size: 2rem;
+        font-weight: bold;
+        border-radius: 50%;
+        border: 2px solid #333;
+        align-items: center;
+      }
+      
+      .guess-input:focus {
+        outline: none;
+        border-color: #6c63ff;
+      }
+
+      
+      .green-letter {
+        color: green;
+        font-size: 6rem;
+        font-weight: bold;
+        vertical-align: middle;
+        margin-right: 1rem;
+        text-align: center;
+    
+      }
+      #remaining-guesses {
+        font-weight: bold;
+      }
+      #remaining-hints-container {
+        margin-top: 1rem;
+        border: 2px solid black;
+        padding: 1rem;
+        width: 20%;
+        margin: 2rem auto;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        border-radius: 2rem;
+        text-align: center;
+      }
+            
+      #hints-remaining {
+        margin-top: 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+      }
+      
+      #remaining-hints-container h2 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        text-align: center;
+        font-weight: bold;
+        margin-top: 0;
+      }
+     
+      
+      .fall-in {
+        animation: fall-in 0.5s forwards;
+      }
+      
+      .expand {
+        animation: expand 0.5s ease-in-out;
+        transform-origin: center;
+      }
+      .glow {
+        animation: glow 1s ease-in-out 5 alternate;
+      }
+      
+      @keyframes fall-in {
+        from {
+          transform: translateY(-100%);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes expand {
+        from {
+          transform: scale(1);
+        }
+        to {
+          transform: scale(1.1);
+        }
+      }
+      
+      @keyframes glow {
+        from {
+          text-shadow: none;
+        }
+        to {
+          text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #fff, 0 0 50px #4e5eec, 0 0 60px #4e5eec, 0 0 70px #4e5eec;
+        }
+      }
+      
+
+
+
+
+      #incorrect-guesses {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #eee;
+        padding: 10px;
+        text-align: center;
+      }
+      
+      #incorrect-guesses h2 {
+        margin: 0;
+      }
+      
+      #incorrect-guesses .letters {
+        color: red;
+        font-size: 24px;
+      
+      }
+      

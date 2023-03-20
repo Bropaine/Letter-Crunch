@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style2.css">
+    <title>Letter Crunch</title>
+  </head>
+  <body>
+    <div id="game-container">
+        <h1>Letter Crunch</h1>
+        <div id="hints-container">
+            <h2>Hints</h2>
+            <p id="hint" class="hidden"></p>
+        </div>
+        <button class="buton" id="reveal-hint-btn">Reveal Hint</button>
+        <div id="remaining-hints-container">
+          <h2>Hints Remaining:</h2>
+          <span id="hints-remaining">3</span>
+        </div>        
+        <p>Guess the hidden word by entering a five-letter guess:</p>
+        <p>Remaining Guesses: <span id="remaining-guesses"></span></p>
+
+        <div id="guess-input-container">
+            <div class="input-container">
+              <input type="text" maxlength="1" class="guess-input" id="guess-input-1" autocomplete="off">
+              <span class="green-letter"></span>
+            </div>
+            <div class="input-container">
+              <input type="text" maxlength="1" class="guess-input" id="guess-input-2" autocomplete="off">
+              <span class="green-letter"></span>
+            </div>
+            <div class="input-container">
+              <input type="text" maxlength="1" class="guess-input" id="guess-input-3" autocomplete="off">
+              <span class="green-letter"></span>
+            </div>
+            <div class="input-container">
+              <input type="text" maxlength="1" class="guess-input" id="guess-input-4" autocomplete="off">
+              <span class="green-letter"></span>
+            </div>
+            <div class="input-container">
+              <input type="text" maxlength="1" class="guess-input" id="guess-input-5" autocomplete="off">
+              <span class="green-letter"></span>
+            </div>
+          </div>
+          
+       <!--<input type="text" maxlength="5" id="guess-input">--> 
+        <button class="button" onclick="checkGuess()">Submit</button>
+        <div id="feedback-container">
+            <span class="correct"></span>
+            <span class="incorrect"></span>
+            <span class="wrong-position"></span>
+        </div>
+        <div id="incorrect-guesses">
+          <h2>Incorrect Guesses:</h2>
+          <span class="letters"></span>
+        </div>
+        
+        <div id="win-message" class="hidden">You Win!</div>
+    </div>
+    
+    <script>
+
+     
+// Set the number of guesses allowed
+const MAX_GUESSES = 6;
+let remainingGuesses = MAX_GUESSES;
+let hiddenWord = "";
+let hintLetter = "";
+const incorrectGuesses = [];
+const correctLetters = new Set();
+let guessInput = null;
+let revealedLetters = [];
+const remainingGuessesEl = document.getElementById('remaining-guesses');
+remainingGuessesEl.textContent = MAX_GUESSES; // Set initial value
+const words = ["apple", "brown", "chair", "draft", "eerie", "feast", "glaze", "happy", "inert", "joust", "knead", //
+   "lemon", "mirth", "nudge", "outer", "plume", "quilt", "resin", "skate", "trace", "usher", "vixen", "waver", "xylem", //
+   "yodel", "zesty", "crowd", "flask", "grant", "hasty", "ivory", "joker", "klutz", "lumen", "munch", "noble", "ounce", //
+   "pedal", "quirk", "roost", "smite", "trunk", "unity", "vexed", "whirl", "zebra", "brick", "decal",//
+    "ember", "fruit", "gloat", "haunt", "inlet", "jumbo", "koala", "llama", "mango", "nacho", "orbit", "peach", "query",//
+     "raven", "siren", "tango", "urban", "vault", "wince", "xerox", "yucca", "zippy", "crumb", "ditch", "elope", "fjord", //
+     "glove", "hound", "icing", "jetty", "knack", "loamy", "mound", "notch", "optic", "plaid", "quell", "rumba", "swipe",//
+      "trove", "unlit", "video", "watch", "x-ray", "yacht", "zilch", "blend", "chime", "druid", "elfin", "abode", "blaze", //
+      "clasp", "douse", "flint", "gripe", "hover", "inkle", "jazzy", "knoll", "lapse", "moire", "nymph", "oasis", "pride", //
+      "queue", "retch", "swoop", "talon", "upset", "vivid", "witty", "xenon", "yurts", "zincs", "brisk", "creep", "dwell", //
+      "elope", "froth", "gusto", "hymns", "idyll", "jumps", "krill", "lucid", "mimic", "numbs", "ogler", "prong", "quark", //
+      "ruddy", "sable", "thyme", "uvula", "viper", "wheez", "xysts", "yarns", "zeals", "bluff", "chide", "dregs", "fable", //
+      "gourd", "hatch", "input", "juice", "kiosk", "lurch", "mirth", "nexus", "opine", "polar", "quash", "roils", "sprit", //
+      "tawny", "unzip", "vegan", "waltz", "xeric", "yelps", "zloty", "brawn", "caper", "douse", "epoch", "frown", "gloom", //
+      "hairs", "ionic", "jacks", "knave", "lanky", "motel", "nerve", "olive", "pluck", "quoin", "rinds", "swoon", "tomes", //
+      "udder", "vague", "wrung", "xenon", "yoked", "zilch", "adore", "bloat", "clamp", "drape", "flair", "gruff", "hippo",//
+       "imply", "jaded", "kebab", "lurid", "melee", "nifty", "overt", "prize", "quaff", "reefs", "shyly", "tulip", "umbra",//
+        "vague", "wrack", "xenon", "yield", "zonal", "blimp", "croon", "dinky", "elope", "frost", "gnarl", "honor", "idiom",//
+         "julep", "karma", "latch", "muggy", "niece", "ochre", "plush", "quire", "roost", "sleek", "tempt", "uncut", "vixen",//
+          "wheat", "xerus", "yodel", "zippy", "boast", "creed", "dorms", "fjord", "gavel", "hiker", "inbox", "joust", "kenaf",//
+           "limbo", "major", "nonce", "ocean", "prowl", "quasi", "rumor", "squat", "tweed", "upend", "vinyl", "wacky", "xylem",//
+            "yummy", "zilch", "bison", "crumb", "dozen", "fable", "grape", "hinge", "iconic", "jumbo", "kneel", "laser", "mince",//
+            "noisy", "otter", "proxy", "quick", "raspy", "spire", "titan", "udder", "viper", "waltz", "xenon", "yacht", "zephyr", //
+            "acorn", "blitz", "chimp", "dwarf", "flick", "giddy", "hutch", "image", "jiffy", "knits", "largo", "mirth", "nicks", //
+            "onset", "prawn", "quart", "ruins", "scoot", "tarry", "ultra", "vista", "wreak", "xerox", "yawns", "zincs", "briar", //
+            "crane", "doves", "fizzy", "gawks", "hoard", "idols", "jabot", "kudos", "ledge", "mucus", "newel", "ovary", "pique", //
+            "qubit", "rugby", "slept", "twine", "udder", "vocal", "wager", "xenia", "yearn", "zebus", "brawn", "clump", "diner", //
+            "flume", "gears", "halos", "icing", "jilts", "kayak", "leapt", "midge", "nylon", "octet", "pyxie", "quoit", "rainy", //
+            "sheaf", "tides", "undue", "vials", "waltz", "xenon", "yurts", "zesty", "bevel", "credo", "droll", "frogs", "gleam", //
+            "hiker", "incus", "jives", "kinks", "lurks", "mercy", "nudge", "organ", "plaza", "quips", "rebel", "swoon", "twist", //
+            "ulnar", "vivid", "wraps", "xylem", "yelps", "zonal", "actor", "blurb", "chill", "demon", "fluke", "giddy", "hedge", //
+            "inbox", "jokes", "krone", "lodge", "molar", "nymph", "ozone", "prism", "quasi", "rifle", "scamp", "trend", "ulcer",//
+             "vista", "whale", "xenon", "yacht", "zulus", "bumpy", "croak", "dunce", "fable", "goose", "hurry", "idiot", "julep", //
+             "kudzu", "larva", "moose", "ninja", "ogres", "pouch", "quack", "robin", "sleet", "tulip", "usher", "wrack", //
+             "xysts", "yodel", "zilch", "brawn", "creed", "dregs", "flora", "gully", "hitch", "imago", "jumpy", "knurl", "leech", //
+             "mirth", "nicks", "ocean", "proud", "quail", "rusty", "smirk", "tires", "uncle", "vivid", "wager", "xenon", "years",//
+              "zebra", "beets", "chirp", "droid", "fjord", "glare", "hicks", "ionic", "jacks", "kneel", "limbo", "motel", "novel",//
+               "otter", "palsy", "quill", "roast", "sable", "tongs", "ukule", "vivid", "waltz", "xerox", "yokes", "zincs", "amber",//
+                "broil", "comet", "daisy", "fling", "globe", "hoist", "inlay", "jazzy", "knoll", "lunar", "mirth", "nudge", "oasis",//
+                 "pouch", "qualm", "rover", "siren", "tango", "udder", "vivid", "wharf", "xenon", "yacht", "zilch", "bison", "clasp",//
+                  "drape", "frost", "gusto", "hinge", "idyll", "joust", "kiosk", "locus", "match", "novel", "orbit", "plume", "quire",//
+                   "roost", "sable", "talon", "ultra", "vixen", "wreak", "xerus", "yurts", "zebra", "blaze", "chimp", "douse", "fable", //
+                   "gully", "hippo", "image", "jetty", "knack", "lotus", "mango", "nexus", "otter", "pulse", "quest", "robin", "sleet", //
+                   "tulip", "ulnar", "viper", "wrung", "xenon", "yarns", "zonal", "brawn", "clump", "drain", "fjord", "gloat", "hutch", //
+                   "ivory", "jumbo", "knead", "limbo", "mince", "nylon", "ocean", "pluck", "quark", "roils", "swoop", "tawny", "unzip", //
+                   "vocal", "waltz", "xeric", "yelps", "zloty", "bevel", "caper", "dozen", "epoch", "frown", "gloom", "hairs", "ionic", //
+                   "jacks", "knave", "lanky", "motel", "nerve", "olive", "prong", "quoin", "rinds", "swoon", "tomes", "vague", "wrack", "xysts" ];
+
+// Get references to the input and feedback elements
+let guessInputs = document.querySelectorAll(".guess-input");
+guessInput = getGuess();
+
+const feedbackElem = document.getElementById("feedback-container");
+hiddenWord = getRandomWordFromArray(words);
+const correctGuesses = new Array(hiddenWord.length).fill(null);
+ // Generate a random word to be guessed
+ /*async function hiddenWordGenerator() {
+  let word = await generateWord();
+  console.log(word);
+  return word;
+}
+
+const word = hiddenWordGenerator();
+word.then(result => {
+  hiddenWord = result.toString();
+  console.log(hiddenWord);
+});*/
+
+// Listen for when the player submits a guess
+function checkGuess() {
+    guessInput = getGuess();
+  // Get the player's guess from the input field
+  const guess = guessInput.toLowerCase();
+ //const feedback = getFeedback(guess);
+  // Make sure the guess is valid (exactly 5 letters)
+  if (!isValidGuess(guess)) {
+    feedbackElem.innerText = "Invalid guess. Please enter exactly 5 letters.";
+    return;
+  }
+  getFeedback(guess);
+  // Decrement the remaining guesses
+  decreaseGuesses();
+
+  displayIncorrectGuesses(incorrectGuesses);
+
+  insertCorrectLetter();
+
+}
+
+function decreaseGuesses() {
+  const currentGuesses = parseInt(remainingGuessesEl.textContent);
+  remainingGuessesEl.textContent = currentGuesses - 1;
+  remainingGuesses--;
+  if (remainingGuesses <= 0) {
+    const loseMessage = document.createElement('div');
+    loseMessage.id = 'lose-message';
+    loseMessage.textContent = `Game over. The hidden word was ${hiddenWord}.`;
+    document.body.appendChild(loseMessage);
+    loseMessage.focus();
+    disableButtons();
+    loseMessage.addEventListener('click', function() {
+    loseMessage.classList.add('hidden');
+    location.reload();
+    });
+  }
+}
+
+// Generate a random five-letter word for the player to guess
+/*async function generateWord() {
+    let word = null; 
+  const options = {
+    method: 'GET',
+    headers: {
+      'X-RapidAPI-Key': '22448c441cmsh14992f72e5a6e07p1a53e6jsn1c22d4d07efb',
+      'X-RapidAPI-Host': 'random-words5.p.rapidapi.com'
+    }
+  };
+  
+  try {
+    const response = await fetch("https://random-words5.p.rapidapi.com/getMultipleRandom?count=1&wordLength=5", options);
+    const data = await response.json();
+    word = data[0];
+    console.log(word);
+  } catch (err) {
+    console.error(err);
+  }
+
+  return word;
+}*/
+
+// Check if a guess is valid (exactly 5 letters)
+function isValidGuess(guess) {
+  return guess.length === guessInputs.length && /^[a-z]+$/.test(guess);
+}
+
+function getFeedback(guess) {
+  const feedbackContainer = document.getElementById('feedback-container');
+  let feedback = "";
+  let correctCount = 0;
+  let correctLetters = [];
+  let correctLettersWrongPos = [];
+  let incorrectCounts = {};
+  let remainingHiddenWord = hiddenWord.slice();
+ 
+  // Count the number of occurrences of each letter in the hidden word
+  for (let i = 0; i < remainingHiddenWord.length; i++) {
+    const letter = remainingHiddenWord[i];
+    if (letter in incorrectCounts) {
+      incorrectCounts[letter]++;
+    } else {
+      incorrectCounts[letter] = 1;
+    }
+  }
+
+  for (let i = 0; i < guess.length; i++) {
+    const letter = guess[i];
+    if (remainingHiddenWord.includes(letter)) {
+      if (remainingHiddenWord[i] === letter) {
+        feedback += `<span class='correct'>${letter}</span>`;
+        correctCount++;
+        correctLetters.push(letter);
+        remainingHiddenWord[i] = null;
+        incorrectCounts[letter]--;
+      } else {
+        correctLettersWrongPos.push(letter);
+      }
+    } else {
+      feedback += `<span class='incorrect'>${letter}</span>`;
+      if (!incorrectGuesses.includes(letter)) {
+        incorrectGuesses.push(letter); 
+      }
+    }
+  }
+
+  // Now handle the correctLettersWrongPos array
+  for (const letter of correctLettersWrongPos) {
+    if (incorrectCounts[letter] > 0) {
+      feedback += `<span class='wrong-position'>${letter}</span>`;
+      incorrectCounts[letter]--;
+    } else {
+      feedback += `<span class='incorrect'>${letter}</span>`;
+    }
+  }
+  
+  feedbackContainer.innerHTML = feedback;
+}
+
+
+function checkWin() {
+  const letterSpans = document.querySelectorAll('#word-container span');
+  letterSpans.forEach(span => span.classList.add('glow'));
+    const winMessage = document.getElementById('win-message');
+    winMessage.classList.remove('hidden');
+    winMessage.focus();
+    disableButtons();
+    winMessage.addEventListener('click', function() {
+      winMessage.classList.add('hidden');
+      location.reload();
+    });
+}
+
+function displayIncorrectGuesses(incorrectGuesses) {
+  const container = document.createElement('div');
+  container.id = 'incorrect-guesses';
+  container.innerHTML = `
+    <h2>Incorrect Guesses:</h2>
+    <span class="letters">${incorrectGuesses.join(' ')}</span>
+  `;
+
+  document.body.appendChild(container);
+}
+
+
+const maxHints = 3;
+let hintsCounter = maxHints;
+
+function revealHint() {
+  if (hintsCounter === 0) {
+    document.getElementById("hint").textContent = "Out of hints!";
+    return;
+  }
+
+  const wordArr = hiddenWord.split("").filter(letter => !correctGuesses.includes(letter));
+  const unrevealedLetters = wordArr.filter(letter => !correctGuesses.includes(letter) && !revealedLetters.includes(letter));
+  if (unrevealedLetters.length === 0) {
+    document.getElementById("hint").textContent = "Sorry, no hints available!";
+    return;
+  }
+
+  hintLetter = unrevealedLetters[Math.floor(Math.random() * unrevealedLetters.length)];
+  document.getElementById("hint").textContent = hintLetter.toLowerCase();
+  document.getElementById("hint").classList.remove("hidden");
+
+  hintsCounter--;
+  document.getElementById("hints-remaining").textContent =  `${hintsCounter}`;
+
+  revealedLetters.push(hintLetter);
+}
+
+
+
+
+
+document.getElementById("reveal-hint-btn").addEventListener("click", revealHint);
+
+
+function moveCursorToNextInput(currentInput) {
+  const guessInputs = document.querySelectorAll(".guess-input");
+  const currentInputIndex = Array.prototype.indexOf.call(guessInputs, currentInput);
+  if (currentInputIndex < guessInputs.length - 1) {
+    guessInputs[currentInputIndex + 1].focus();
+  }
+}
+
+function moveCursorToPreviousInput(currentInput) {
+  const guessInputs = document.querySelectorAll(".guess-input");
+  const currentInputIndex = Array.prototype.indexOf.call(guessInputs, currentInput);
+  if (currentInputIndex > 0) {
+    guessInputs[currentInputIndex - 1].focus();
+  }
+}
+
+guessInputs.forEach((input) => {
+  input.addEventListener("input", (e) => {
+    const currentInput = e.target;
+    if (currentInput.value.length > 0) {
+      moveCursorToNextInput(currentInput);
+    }
+  });
+
+  input.addEventListener("keydown", (e) => {
+    const currentInput = e.target;
+    if (e.key === "Backspace" && currentInput.value.length === 0) {
+      moveCursorToPreviousInput(currentInput);
+    }
+  });
+});
+
+function handleEnterKey(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault(); // Prevent any default behavior (e.g., submitting a form)
+    checkGuess();
+  }
+}
+
+// Assuming guessInputs is the NodeList of your input elements
+guessInputs.forEach((input) => {
+  input.addEventListener('keydown', handleEnterKey);
+});
+
+function insertCorrectLetter() {
+  for (let i = 0; i < hiddenWord.length; i++) {
+    const input = document.getElementById(`guess-input-${i+1}`);
+    if (input && input.value === hiddenWord.charAt(i)) {
+      correctGuesses[i] = hiddenWord.charAt(i);
+      const letterSpan = input.nextElementSibling;
+      letterSpan.textContent = hiddenWord.charAt(i);
+      input.parentNode.insertBefore(letterSpan, input);
+      input.remove();
+      letterSpan.classList.add('fall-in');
+      letterSpan.addEventListener('animationend', function() {
+        letterSpan.classList.add('expand');
+        letterSpan.addEventListener('animationend', function() {
+        letterSpan.classList.add('glow');
+      });
+      });
+      
+      
+    }
+  }
+  
+  if (correctGuesses.join('') === hiddenWord) {
+    checkWin();
+   }
+  }
+
+ 
+function disableButtons() {
+  const inputs = document.querySelectorAll('button');
+  inputs.forEach(input => input.disabled = true);
+}
+
+function getGuess() {
+  let guess = "";
+  guessInputs = document.querySelectorAll(".guess-input");
+  guessInputs.forEach(input => {
+    const letterSpan = input.previousElementSibling;
+    guess += (letterSpan && letterSpan.textContent) || (input && input.value) || '';
+  });
+  return guess;
+}
+
+function getRandomWordFromArray(words) {
+  return words[Math.floor(Math.random() * words.length)];
+}
+
+    </script>
+  </body>
+</html>
