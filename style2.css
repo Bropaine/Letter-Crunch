@@ -317,17 +317,30 @@ body {
         margin-top: 0;
       }
      
-      
       .fall-in {
         animation: fall-in 0.5s forwards;
+        -webkit-animation: fall-in 0.5s forwards;
       }
       
       .expand {
         animation: expand 0.5s ease-in-out;
+        -webkit-animation: expand 0.5s ease-in-out;
         transform-origin: center;
+        -webkit-transform-origin: center;
       }
+      
       .glow {
         animation: glow 1s ease-in-out 5 alternate;
+        -webkit-animation: glow 1s ease-in-out 5 alternate;
+      }
+      
+      @keyframes fall-in {
+        from {
+          transform: translateY(-100%);
+        }
+        to {
+          transform: translateY(0);
+        }
       }
       
       @-webkit-keyframes fall-in {
@@ -336,6 +349,15 @@ body {
         }
         to {
           -webkit-transform: translateY(0);
+        }
+      }
+      
+      @keyframes expand {
+        from {
+          transform: scale(1);
+        }
+        to {
+          transform: scale(1.1);
         }
       }
       
@@ -348,16 +370,24 @@ body {
         }
       }
       
-      @-webkit-keyframes glow {
+      @keyframes glow {
         from {
-          -webkit-text-shadow: none;
+          text-shadow: none;
         }
         to {
-          -webkit-text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #fff, 0 0 50px #4e5eec, 0 0 60px #4e5eec, 0 0 70px #4e5eec;
+          text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #fff, 0 0 50px #4e5eec, 0 0 60px #4e5eec, 0 0 70px #4e5eec;
         }
       }
       
-
+      @-webkit-keyframes glow {
+        from {
+          text-shadow: none;
+        }
+        to {
+          text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #fff, 0 0 50px #4e5eec, 0 0 60px #4e5eec, 0 0 70px #4e5eec;
+        }
+      }
+      
 
 
 
