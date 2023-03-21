@@ -370,23 +370,21 @@ function insertCorrectLetter() {
       const letterSpan = input.nextElementSibling;
       letterSpan.textContent = hiddenWord.charAt(i);
       input.parentNode.insertBefore(letterSpan, input);
-      input.remove();
+      input.style.display = 'none';
       letterSpan.classList.add('fall-in');
-      letterSpan.addEventListener('animationend', function() {
+      setTimeout(function() {
         letterSpan.classList.add('expand');
-        letterSpan.addEventListener('animationend', function() {
-        letterSpan.classList.add('glow');
-      });
-      });
-      
-      
+        setTimeout(function() {
+          letterSpan.classList.add('glow');
+        }, 500);
+      }, 500);
     }
   }
   
   if (correctGuesses.join('') === hiddenWord) {
     checkWin();
-   }
   }
+}
 
  
 function disableButtons() {
